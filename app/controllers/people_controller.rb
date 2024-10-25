@@ -11,9 +11,9 @@ class PeopleController < ApplicationController
     person = Person.new(person_attributes)
 
     if person.save
-      render status: 200, json: { id: person.id, name: person.name }
+      render status: :ok, json: { id: person.id, name: person.name }
     else
-      render status: 422, json: person.errors.as_json
+      render status: :bad_request, json: person.errors.as_json
     end
   end
 end
