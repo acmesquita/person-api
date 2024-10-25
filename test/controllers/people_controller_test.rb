@@ -35,6 +35,6 @@ class PeopleControllerTest < ActionDispatch::IntegrationTest
      }
     }
     post "/people", params: params
-    assert_response 500
+    assert_response 400
   end
 end
