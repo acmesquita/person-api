@@ -11,6 +11,6 @@ class Person::List < Solid::Process
   end
 
   def find_peolpe
-    Continue(people: Person.all())
+    Continue(people: Person.includes(:contacts).all())
   end
 end
