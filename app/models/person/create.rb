@@ -1,42 +1,30 @@
 # frozen_string_literal: true
 
-class Person::Create
-  attr_accessor :person, :params
-
-  def initialize(params)
-    @params = params
+class Person::Create < Solid::Process
+  input do
+    attribute :person
+    attribute :contacts
   end
 
-  def self.call(params)
-    new(params).call
+  def call(attributes)
+    rollback_on_failure {
+      Given(attributes)
+          .and_then(:create_person)
+          .and_then(:create_contacts)
+          .and_expose(:person_create, [ :person ])
+    }
   end
 
-  def call
-    ActiveRecord::Base.transaction do
-      create_person
-      create_contacts
-    end
-
-    person
+  def create_person(person:, **)
+    Continue(person: Person.create!(person))
+  rescue => e
+    Failure(:invalid_person, error: e.message)
   end
 
-  private
-
-  def create_person
-    @person = Person.create(person_attributes)
-  end
-
-  def create_contacts
-    contacts_params.each do |contact_param|
-      Contact.create(contact_param.merge(person_id: @person.id))
-    end
-  end
-
-  def person_attributes
-    params[:person]
-  end
-
-  def contacts_params
-    params[:contacts]
+  def create_contacts(person:, contacts:, **)
+    Contact.create!(contacts.map { |contact| contact.merge(person_id: person.id) })
+    Continue(person:)
+  rescue => e
+    Failure(:invalid_contact, error: e.message)
   end
 end

@@ -1,24 +1,27 @@
 class PeopleController < ApplicationController
+  include People::Rendering
   def create
-    person_params = params.require(:person).permit(:firstName, :lastName, contacts: [ :kind, :content ])
-
-    # Adapter
-    person_attributes = {
-      first_name: person_params[:firstName],
-      last_name: person_params[:lastName]
-    }
-
-    @person = Person::Create.call({
+    result = Person::Create.call({
       person: person_attributes,
       contacts: person_params[:contacts]
     })
 
-    render status: :ok, json: {
-        id: @person.id,
-        name: @person.name,
-        contacts: @person.contacts.map { |contact| { kind: contact.kind, content: contact.content } }
-      }
-  rescue => exception
-    render status: :bad_request, json: { error: exception.message }.to_json
+    case result
+    in Solid::Failure(:invalid_person | :invalid_contact, error); render_error(error)
+    in Solid::Success(person:); render_person(person)
+    end
+  end
+
+  private
+
+  def person_params
+    @person_params ||= params.require(:person).permit(:firstName, :lastName, contacts: [ :kind, :content ])
+  end
+
+  def person_attributes
+    {
+      first_name: person_params[:firstName],
+      last_name: person_params[:lastName]
+    }
   end
 end
