@@ -249,6 +249,10 @@ GEM
       rubocop-rails
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
+    solid-process (0.4.0)
+      activemodel (>= 6.0)
+      solid-result (~> 2.0)
+    solid-result (2.0.0)
     solid_cable (3.0.2)
       actioncable (>= 7.2)
       activejob (>= 7.2)
@@ -326,6 +330,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 8.0.0.rc1)
   rubocop-rails-omakase
+  solid-process
   solid_cable
   solid_cache
   solid_queue
