@@ -1,5 +1,14 @@
 class PeopleController < ApplicationController
   include People::Rendering
+  def index
+    result = Person::List.call
+
+    case result
+    in Solid::Failure(_, error); render_error(error)
+    in Solid::Success(people:); render_people(people)
+    end
+  end
+
   def create
     result = Person::Create.call({
       person: person_attributes,
