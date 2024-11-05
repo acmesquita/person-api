@@ -7,7 +7,7 @@ Refatorando uma aplicação com solid-process
 ### Instalação
 
 - Ruby: `3.3.5`
-- Rails: `8.0.0.rc1`
+- Rails: `8.0.0.rc2`
 
 > Instalação das dependências
 
